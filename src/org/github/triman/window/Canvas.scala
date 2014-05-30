@@ -15,8 +15,16 @@ import java.awt.geom.NoninvertibleTransformException
 import java.awt.RenderingHints
 import org.github.triman.graphics.Drawable
 
+/**
+ * Defines a Canvas as a surface where Drawable objects can be drawn, zoomed using
+ * the mouse wheel and panned (via drag&drop).
+ * @see org.github.triman.Drawable
+ */
 class Canvas extends Panel{
 	
+	/**
+	 * The shapes that will be drawn on the Canvas
+	 */
 	val shapes = new MutableList[Drawable]()
 	
 	private var currentX = 0.0
@@ -55,6 +63,9 @@ class Canvas extends Panel{
       }
     }
 	
+	/**
+	 * Get the current transform
+	 */
 	private def currentTransform() = {
 		val tx = new AffineTransform();
          
@@ -68,6 +79,9 @@ class Canvas extends Panel{
         tx
 	}
 	
+	/**
+	 * Computes the transform of a point on the surface, using the current transform
+	 */
 	private def getTranslatedPoint(x : Double, y : Double) = {
 		val tx = currentTransform
         val point2d = new Point2D.Double(x, y)
