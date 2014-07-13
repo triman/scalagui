@@ -14,6 +14,8 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.NoninvertibleTransformException
 import java.awt.RenderingHints
 import org.github.triman.graphics.Drawable
+import java.awt.AlphaComposite
+import org.github.triman.utils.Notifier
 
 /**
  * Defines a Canvas as a surface where Drawable objects can be drawn, zoomed using
@@ -26,10 +28,11 @@ class Canvas extends Panel{
 	 * The shapes that will be drawn on the Canvas
 	 */
 	val shapes = new MutableList[Drawable]()
+	val zoom = new Notifier[Double, Symbol](1.0){def id='Zoom}
+	
 	
 	private var currentX = 0.0
 	private var currentY = 0.0
-	private var zoom = 2.0
 	private var previousX = 0.0
 	private var previousY = 0.0
 	
@@ -57,8 +60,8 @@ class Canvas extends Panel{
                 repaint();
       }
       case e : MouseWheelMoved => {
-    	  zoom += .1 * -e.rotation
-    	  zoom = Math.max(0.00001, zoom)
+      	val z = zoom() + .02 * -e.rotation
+    	  zoom.update(Math.max(0.00001, z))
     	  repaint()
       }
     }
@@ -73,7 +76,7 @@ class Canvas extends Panel{
         val centerY = size.height.asInstanceOf[Double] / 2
          
         tx.translate(centerX, centerY)
-        tx.scale(zoom, zoom)
+        tx.scale(zoom(), zoom())
         tx.translate(currentX, currentY)
         
         tx
@@ -95,11 +98,11 @@ class Canvas extends Panel{
         }
 	}
 	
-	override def paintComponent(g: Graphics2D) = {
-		super.paintComponent(g)
+	override def paint(g: Graphics2D) = {
+		super.paint(g)
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON)
-		
+				
 		shapes.foreach(s => {
 				s.fill(g, currentTransform)
 				s.draw(g, currentTransform)
