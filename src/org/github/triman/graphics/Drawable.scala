@@ -187,3 +187,45 @@ class UntransformedDrawable(drawable : Drawable) extends Drawable {
 		drawable.shape
 	}
 }
+
+sealed abstract class HorizontalAnchor
+sealed abstract class VerticalAnchor
+object Top extends VerticalAnchor
+object Bottom extends VerticalAnchor
+object Left extends HorizontalAnchor
+object Right extends HorizontalAnchor
+
+class AnchoredDrawable(var verticalAnchor : VerticalAnchor, var horizontalAnchor : HorizontalAnchor, drawable : Drawable) extends UntransformedDrawable(drawable){
+	override def draw(g : Graphics2D, t : AffineTransform){
+		val t2 = new AffineTransform()
+		t2.setToIdentity()
+		var dx = 0
+		var dy = 0
+		
+		if(verticalAnchor == Bottom){
+			dy = g.getClipBounds().height - shape.getBounds().height
+		}
+		if(horizontalAnchor == Right){
+			dx = g.getClipBounds().width - shape.getBounds().width
+		}
+		t2.translate(dx, dy)
+		
+		drawable.draw(g, t2)
+	}
+	override def fill(g : Graphics2D, t : AffineTransform){
+		val t2 = new AffineTransform()
+		t2.setToIdentity()
+		var dx = 0
+		var dy = 0
+		
+		if(verticalAnchor == Bottom){
+			dy = g.getClipBounds().height - shape.getBounds().height
+		}
+		if(horizontalAnchor == Right){
+			dx = g.getClipBounds().width - shape.getBounds().width
+		}
+		t2.translate(dx, dy)
+		
+		drawable.fill(g, t2)
+	}
+}
