@@ -7,15 +7,29 @@ import org.github.triman.graphics._
 import java.awt.geom.RoundRectangle2D
 import java.awt.Color
 import java.awt.BasicStroke
+import scala.swing.BorderPanel
+import scala.swing.Button
 
 object CanvasSampleWindow extends Frame{
 
 	def main(args: Array[String]): Unit = {
 			visible = true
 			peer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+			val panel = new BorderPanel
 			val canvas = new Canvas
-			canvas.preferredSize = new Dimension(1000,500)
-			contents = canvas
+			panel.preferredSize = new Dimension(1000,500)
+			contents = panel
+			panel.layout(canvas) = BorderPanel.Position.Center
+			
+			
+			val toolbar = new Toolbar
+			toolbar.add(new Button("hello"))
+			toolbar.add(new Button("world"))
+			val toolbar2 = new Toolbar
+			toolbar2.add(new Button("foo"))
+			toolbar2.add(new Button("bar"))
+			panel.layout(toolbar) = BorderPanel.Position.North
+			panel.layout(toolbar2) = BorderPanel.Position.North
 			
 			var s = new CompositeDrawableShape(
 					new ColoredDrawableShape(DrawableShapeCompanion.Shape2DrawableShape(new RoundRectangle2D.Double(0,0,10,10,3,3)),null,Color.RED,

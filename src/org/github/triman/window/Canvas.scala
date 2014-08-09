@@ -29,7 +29,7 @@ class Canvas extends Panel{
 	 */
 	val shapes = new MutableList[Drawable]()
 	val zoom = new Notifier[Double, Symbol](1.0){def id='Zoom}
-	
+	var backgroundDrawable : Drawable = null;
 	
 	private var currentX = 0.0
 	private var currentY = 0.0
@@ -69,7 +69,7 @@ class Canvas extends Panel{
 	/**
 	 * Get the current transform
 	 */
-	private def currentTransform() = {
+	def currentTransform() = {
 		val tx = new AffineTransform();
          
         val centerX = size.width.asInstanceOf[Double] / 2
@@ -102,15 +102,23 @@ class Canvas extends Panel{
 		super.paint(g)
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON)
+		// draw background
+		if(backgroundDrawable != null){
+			val t = new AffineTransform
+			val size = backgroundDrawable.shape.getBounds2D()
+			for(i <- 0 until (g.getClipBounds().width/size.getWidth()).ceil.toInt){
+				for(j <- 0 until (g.getClipBounds().height/size.getHeight()).ceil.toInt){
+				t.setToIdentity()
+				t.translate(i*size.getWidth(), j*size.getHeight())
+					backgroundDrawable.draw(g, t)
+					backgroundDrawable.fill(g, t)
+				}
+			}
+		}
 				
 		shapes.foreach(s => {
 				s.fill(g, currentTransform)
 				s.draw(g, currentTransform)
 			})
     }
-	
-	
-	
-	
-	
 }
