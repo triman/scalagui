@@ -98,6 +98,8 @@ class Canvas extends Panel{
         }
 	}
 	
+	def paintOnBackground(g: Graphics2D) = {}
+	
 	override def paint(g: Graphics2D) = {
 		super.paint(g)
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -115,7 +117,9 @@ class Canvas extends Panel{
 				}
 			}
 		}
-				
+		
+		paintOnBackground(g)
+		
 		shapes.foreach(s => {
 				s.fill(g, currentTransform)
 				s.draw(g, currentTransform)
